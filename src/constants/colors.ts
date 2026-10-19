@@ -18,6 +18,9 @@ export const colors = {
   income: '#167E57',
   expense: '#C2410C',
 
+  /** Painel translúcido sobre o card de saldo (fundo brandDark) na tela Início. */
+  overlayLight: 'rgba(255, 255, 255, 0.14)',
+
   // status das contas a pagar
   statusPaid: '#167E57',
   statusPaidBg: '#E7F3EC',

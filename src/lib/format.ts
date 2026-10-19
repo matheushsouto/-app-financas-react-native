@@ -22,3 +22,8 @@ export function formatMonthYear(date: Date): string {
 
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
+
+export function formatMonthName(date: Date): string {
+  const label = new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(date);
+  return label.charAt(0).toUpperCase() + label.slice(1);
+}

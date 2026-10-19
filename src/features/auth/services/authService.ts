@@ -1,4 +1,9 @@
-import { sendPasswordResetEmail, signInWithEmailAndPassword, type AuthError } from 'firebase/auth';
+import {
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signOut as firebaseSignOut,
+  type AuthError,
+} from 'firebase/auth';
 
 import { auth } from '../../../lib/firebase';
 import { SignInInput } from '../types';
@@ -25,4 +30,8 @@ export async function signIn({ email, password }: SignInInput) {
 
 export async function resetPassword(email: string) {
   await sendPasswordResetEmail(auth, email.trim());
+}
+
+export async function signOut() {
+  await firebaseSignOut(auth);
 }
