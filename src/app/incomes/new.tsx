@@ -6,56 +6,36 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Button, Screen, TextField } from '../../components/ui';
 import { colors, radius, spacing, typography } from '../../constants';
 import { addIncome, INCOME_CATEGORY_OPTIONS, type IncomeCategory } from '../../features/incomes';
-import { auth } from '../../lib/firebase';
-
-function todayAsInputDate(): string {
-  const now = new Date();
-  const dd = String(now.getDate()).padStart(2, '0');
-  const mm = String(now.getMonth() + 1).padStart(2, '0');
-  return `${dd}/${mm}/${now.getFullYear()}`;
-}
-
-function parseInputDate(value: string): Date | null {
-  const match = value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-  if (!match) return null;
-
-  const [, dd, mm, yyyy] = match;
-  const date = new Date(Number(yyyy), Number(mm) - 1, Number(dd));
-  return Number.isNaN(date.getTime()) ? null : date;
-}
+import { useAuthUser } from '../../features/auth';
+import { formatInputDate, parseInputDate } from '../../lib/date';
 
 export default function NewIncomeScreen() {
+  const { user } = useAuthUser();
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
-  const [receivedAt, setReceivedAt] = useState(todayAsInputDate());
+  const [receivedAt, setReceivedAt] = useState(() => formatInputDate(new Date()));
   const [category, setCategory] = useState<IncomeCategory>('work');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
   async function handleSave() {
-    console.log('[incomes/new] handleSave chamado', { amount, description, receivedAt, category });
-
     const parsedAmount = Number(amount.replace(',', '.'));
     const parsedDate = parseInputDate(receivedAt);
 
     if (!parsedAmount || parsedAmount <= 0) {
-      console.log('[incomes/new] valor inválido', amount, '->', parsedAmount);
       setError('Informe um valor válido.');
       return;
     }
     if (!description.trim()) {
-      console.log('[incomes/new] descrição vazia');
       setError('Informe uma descrição.');
       return;
     }
     if (!parsedDate) {
-      console.log('[incomes/new] data inválida', receivedAt);
       setError('Informe a data no formato dd/mm/aaaa.');
       return;
     }
 
-    const uid = auth.currentUser?.uid;
-    console.log('[incomes/new] uid atual:', uid);
+    const uid = user?.uid;
     if (!uid) {
       setError('Faça login novamente para continuar.');
       return;
@@ -64,14 +44,12 @@ export default function NewIncomeScreen() {
     setError('');
     setSaving(true);
     try {
-      console.log('[incomes/new] chamando addIncome...');
       await addIncome(uid, {
         amount: parsedAmount,
         description: description.trim(),
         receivedAt: parsedDate.toISOString(),
         category,
       });
-      console.log('[incomes/new] addIncome concluído com sucesso');
       router.back();
     } catch (err) {
       console.error('[incomes/new] falha ao salvar receita:', err);

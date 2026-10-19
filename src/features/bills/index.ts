@@ -1,2 +1,6 @@
 export * from './types';
-// TODO (aula): exportar useBills, BillListItem, billsService...
+export * from './categories';
+export * from './status';
+export * from './components/BillListItem';
+export * from './hooks/useMonthlyBills';
+export * from './services/billsService';
