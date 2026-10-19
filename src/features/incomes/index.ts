@@ -1,2 +1,5 @@
 export * from './types';
-// TODO (aula): exportar useIncomes, IncomeListItem, incomesService...
+export * from './categories';
+export * from './components/IncomeListItem';
+export * from './hooks/useMonthlyIncomes';
+export * from './services/incomesService';
